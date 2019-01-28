@@ -8,6 +8,7 @@ use \Hcode\Model;
 class User extends Model {
 
 	const SESSION = "User";
+  const SECRET = "gabrielsistemas_secret"
 
 	public static function login($login, $password){
 
@@ -139,7 +140,7 @@ class User extends Model {
       SELECT * 
       FROM tb_persons a 
       INNER JOIN tb_users b USING(idperson)
-       WHERE a.desemail = email;
+       WHERE a.desemail = :email;
 
 
       ", array(
@@ -157,6 +158,29 @@ class User extends Model {
     }
     else
     {
+
+      $data = $results[0];
+
+      $results2 = $sql-.select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
+
+        ":iduser"=>$data["iduser"],
+        ":desip"=>$_SERVER["REMOTE_ADDR"]//pega o ip do usuario
+      ));
+
+      if (count($results2) == 0) {
+
+        throw new Exception("Não foi possível recuperar a senha");
+        
+        # code...
+      }
+      else
+      {
+        $datarecovery = $results2[0]
+
+        base64_encode(mcrypt_decrypt(MCRYPT_RIJNDEAL_128, User::SECRET, $dataRecovery["idrecorvery"], MCRYPT_MODE_ECB));
+
+        $link = "http://http://www.hcodecommerce.com.br/admin/forgot/reset?code=$code"
+      }
       
     }
   }
