@@ -37,6 +37,8 @@ Class Mailer {
 
 $this->mail = new \PHPMailer;
 
+$this->mail->msgHTML(utf8_encode($html));
+
 //Tell PHPMailer to use SMTP
 $this->mail->isSMTP();
 
