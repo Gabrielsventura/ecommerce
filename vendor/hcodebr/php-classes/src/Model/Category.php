@@ -30,6 +30,8 @@ class Category extends Model {
      ));
 
     $this->setData($result[0]);
+
+    Category::updateFile();
   }
 
   public function get($idcategory){
